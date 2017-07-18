@@ -6,17 +6,12 @@ https://docs.spatie.be/laravel-backup/v3/introduction
 ### Pubblichiamo la configurazione
 `php artisan vendor:publish --provider="Spatie\Backup\BackupServiceProvider"`
 
-e la modifichiamo come `laravel-backup.php`
+e la modifichiamo come `examples/laravel-backup.php`
 
 ## Installiamo il disco sftp
 `composer require league/flysystem-sftp`
 
-### creiamo un plugin che ci servirà per aggiungere i provider e definire la schedulazione
-`php artisan create:plugin Inerba.Backup`
-
-guardare il file `Plugin.php`
-
-creiamo la cartella `/plugins/inerba/backup/providers/` e copiamo il file `SftpServiceProvider.php`
+### copiamo il plugin che si trova in `src` dentro la cartella `plugins`
 
 in 'app/filesystems.php' aggiungiamo un disco
 ```
@@ -32,6 +27,7 @@ in 'app/filesystems.php' aggiungiamo un disco
             //'directoryPerm' => 0755
           ],       
 ```
+
 
 ## controlliamo che esista questa riga nel crontab
 `* * * * * php /path/to/artisan schedule:run >> /dev/null 2>&1`

@@ -109,10 +109,13 @@ class Plugin extends PluginBase
     {
         $name = date('Y-m-d-His').'.auto-db.zip';
         $name_full = date('Y-m-d-His').'.auto-full.zip';
-        /*
-        $schedule->command('backup:clean')->daily()->at('02:30');
-        $schedule->command('backup:run --only-db')->daily()->at('02:00');
-        $schedule->command('backup:run --filename='.$name_full')->weekly()->at('03:00');
-        */
+
+        if( \Config::get('inerba.backup::enable_schedule') ) {
+
+            $schedule->command('backup:clean')->daily()->at('02:30');
+            $schedule->command('backup:run --only-db --filename='.$name)->daily()->at('02:00');
+            $schedule->command('backup:run --filename='.$name_full)->weekly()->at('03:00');
+
+        }
     }
 }
