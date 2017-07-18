@@ -10,7 +10,7 @@ use Response;
 class DownloadBackup extends ReportWidgetBase
 {
     protected $defaultAlias = 'inerba_backup';
-	
+    
     public function render(){
         $this->vars['files'] = $this->read_files();
         return $this->makePartial('widget');
@@ -37,42 +37,59 @@ class DownloadBackup extends ReportWidgetBase
     }
 
     public function onBackupDb(){
-        $name = date('Y-m-d-His').'.database.zip';
-        try {
-            traceLog('Backup manuale del database');
-            Artisan::call('backup:run',
-                [
-                    '--only-db' => true,
-                    '--filename' => $name,
-                ]
-            );
-        } catch (Exception $e) {
-            Response::make($e->getMessage(), 500);
-        }
+        $user = \BackendAuth::getUser();
 
-        Flash::success('Backup creato con successo!');
-        
-        return [
-            'partial' => $this->makePartial(
-                'widget',
-                [
-                    'files'  => $this->read_files(),
-                ]
-            )
-        ];
+        if ($user && ( $user->is_superuser || $user->hasPermission([
+            'inerba.backup.download',
+        ]))) {
+            $name = date('Y-m-d-His').'.database.zip';
+            try {
+                traceLog('Backup manuale del database');
+                Artisan::call('backup:run',
+                    [
+                        '--only-db' => true,
+                        '--filename' => $name,
+                    ]
+                );
+            } catch (Exception $e) {
+                Response::make($e->getMessage(), 500);
+            }
+
+            Flash::success('Backup creato con successo!');
+            
+        } else {
+            Flash::error('Non sei autorizzato!');
+        }
+            return [
+                'partial' => $this->makePartial(
+                    'widget',
+                    [
+                        'files'  => $this->read_files(),
+                    ]
+                )
+            ];
 
     }
 
     public function onBackupClean(){
-        try {
-            traceLog('Pulizia dei backup non necessari');
-            Artisan::call('backup:clean');
-        } catch (Exception $e) {
-            Response::make($e->getMessage(), 500);
+        $user = \BackendAuth::getUser();
+        
+        if ($user && ( $user->is_superuser || $user->hasPermission([
+            'inerba.backup.download',
+        ]))) {
+            try {
+                traceLog('Pulizia dei backup non necessari');
+                Artisan::call('backup:clean');
+            } catch (Exception $e) {
+                Response::make($e->getMessage(), 500);
+            }
+
+            Flash::success('Pulizia effettuata!');
+        
+        } else {
+            Flash::error('Non sei autorizzato!');
         }
 
-        Flash::success('Pulizia effettuata!');
-        
         return [
             'partial' => $this->makePartial(
                 'widget',

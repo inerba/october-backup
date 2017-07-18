@@ -67,12 +67,10 @@ class Plugin extends PluginBase
      */
     public function registerPermissions()
     {
-        return []; // Remove this line to activate
-
         return [
-            'inerba.backup.some_permission' => [
+            'inerba.backup.download' => [
                 'tab' => 'Backup',
-                'label' => 'Some permission'
+                'label' => 'Download backup'
             ],
         ];
     }
