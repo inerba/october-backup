@@ -1,0 +1,46 @@
+<div id="cachesizes" class="report-widget">
+    <h3><?= e(trans($this->property('title'))) ?></h3>
+
+    <div class="control-list">
+	    <table class="table data">
+	        <thead>
+	            <tr>
+	                <th><span>Tipo</span></th>
+	                <th><span>Data</span></th>
+	                <th><span>Dimensione</span></th>
+	                <th><span></span></th>
+	            </tr>
+	        </thead>
+	        <tbody>
+                <?php foreach($files as $file){?>
+	            <tr>
+			    	<td><code><?= strtoupper($file['type']) ?></code></td>
+			    	<td><?= $file['date'] ?></td>
+			    	<td><?= $file['size'] ?></td>
+			    	<td class="column-button nolink">
+			    		<a
+	                        href="/backend/inerba/backup/<?= $file['filename'] ?>"
+	                        target="_blank"
+	                        class="btn btn-secondary btn-sm">
+	                        Scarica
+	                    </a>
+			    	</td>
+	            </tr>
+				<?php } ?>
+	        </tbody>
+	    </table>
+	</div>
+
+    <button type="button" class="btn btn-sm btn-success"
+        data-request="<?= $this->getEventHandler('onBackupDb') ?>"
+        data-request-success="$('#cachesizes').replaceWith(data.partial)">
+        Backup manuale del database
+    </button>
+    
+    <button type="button" class="btn btn-sm btn-success"
+        data-request="<?= $this->getEventHandler('onBackupClean') ?>"
+        data-request-success="$('#cachesizes').replaceWith(data.partial)">
+        Pulisci backup
+    </button>
+
+</div>
