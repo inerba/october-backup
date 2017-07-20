@@ -112,7 +112,9 @@ class DownloadBackup extends ReportWidgetBase
 
     private function read_files(){
 
-        $disk = Storage::disk('sftp');
+        $disk_name = config('laravel-backup.backup.destination.disks');
+
+        $disk = Storage::disk($disk_name[0]);
 
         $folder = config('laravel-backup.backup.name');
 
